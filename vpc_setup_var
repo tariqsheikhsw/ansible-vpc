@@ -1,4 +1,4 @@
-vpc_name: "Vprofile-vpc"
+vpc_name: "ansible-vpc"
 
 # VPC Range
 vpcCidr: '172.20.0.0/16'
