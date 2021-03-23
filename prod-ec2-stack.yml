@@ -58,18 +58,18 @@
 
     - name: Update Securiry Group with its own sg id
       ec2_group:
-        name: vproStack-sg
+        name: PRODStack-sg
         description: Allow port 22 from everywhere and all port within sg
         region: "{{region}}"
         vpc_id: "{{vpcid}}"
         purge_rules: no
         rules:
           - proto: all
-            group_id: "{{vproStackSG_out.group_id}}"
+            group_id: "{{PRODStackSG_out.group_id}}"
 
     - name: Creating Nginx web01
       ec2:
-        key_name: vprokey
+        key_name: PRODkey
         region: "{{region}}"
         instance_type: t2.micro
         image: "{{nginx_ami}}"
@@ -77,20 +77,20 @@
         wait_timeout: 300
         instance_tags:
           Name: "web01"
-          Project: Vprofile
+          Project: PROD Project
           Owner: DevOps Team
         exact_count: 1
         count_tag:
           Name: "web01"
-          Project: Vprofile
+          Project: PROD Project
           Owner: DevOps Team
-        group_id: "{{vproStackSG_out.group_id}}"
+        group_id: "{{PRODStackSG_out.group_id}}"
         vpc_subnet_id: "{{privsub1id}}"
       register: web01_out
 
     - name: Creating tomcat app01
       ec2:
-        key_name: vprokey
+        key_name: PRODkey
         region: "{{region}}"
         instance_type: t2.micro
         image: "{{tomcat_ami}}"
@@ -98,20 +98,20 @@
         wait_timeout: 300
         instance_tags:
           Name: "app01"
-          Project: Vprofile
+          Project: PROD Project
           Owner: DevOps Team
         exact_count: 1
         count_tag:
           Name: "app01"
-          Project: Vprofile
+          Project: PROD Project
           Owner: DevOps Team
-        group_id: "{{vproStackSG_out.group_id}}"
+        group_id: "{{PRODStackSG_out.group_id}}"
         vpc_subnet_id: "{{privsub1id}}"
       register: app01_out
 
     - name: Creating memcache mc01
       ec2:
-        key_name: vprokey
+        key_name: PRODkey
         region: "{{region}}"
         instance_type: t2.micro
         image: "{{memcache_ami}}"
@@ -119,20 +119,20 @@
         wait_timeout: 300
         instance_tags:
           Name: "mc01"
-          Project: Vprofile
+          Project: PROD Project
           Owner: DevOps Team
         exact_count: 1
         count_tag:
           Name: "mc01"
-          Project: Vprofile
+          Project: PROD Project
           Owner: DevOps Team
-        group_id: "{{vproStackSG_out.group_id}}"
+        group_id: "{{PRODStackSG_out.group_id}}"
         vpc_subnet_id: "{{privsub1id}}"
       register: mc01_out
 
     - name: Creating RabbitMQ rmq01
       ec2:
-        key_name: vprokey
+        key_name: PRODkey
         region: "{{region}}"
         instance_type: t2.micro
         image: "{{rmq_ami}}"
@@ -140,20 +140,20 @@
         wait_timeout: 300
         instance_tags:
           Name: "rmq01"
-          Project: Vprofile
+          Project: PROD Project
           Owner: DevOps Team
         exact_count: 1
         count_tag:
           Name: "rmq01"
-          Project: Vprofile
+          Project: PROD Project
           Owner: DevOps Team
-        group_id: "{{vproStackSG_out.group_id}}"
+        group_id: "{{PRODStackSG_out.group_id}}"
         vpc_subnet_id: "{{privsub1id}}"
       register: rmq01_out
 
     - name: Creating Mysql db01
       ec2:
-        key_name: vprokey
+        key_name: PRODkey
         region: "{{region}}"
         instance_type: t2.micro
         image: "{{mysql_ami}}"
@@ -161,14 +161,14 @@
         wait_timeout: 300
         instance_tags:
           Name: "db01"
-          Project: Vprofile
+          Project: PROD Project
           Owner: DevOps Team
         exact_count: 1
         count_tag:
           Name: "db01"
-          Project: Vprofile
+          Project: PROD Project
           Owner: DevOps Team
-        group_id: "{{vproStackSG_out.group_id}}"
+        group_id: "{{PRODStackSG_out.group_id}}"
         vpc_subnet_id: "{{privsub1id}}"
       register: db01_out
 
@@ -177,13 +177,13 @@
 
     - local_action:
         module: ec2_elb_lb
-        name: "vprofile-elb"
+        name: "PROD-elb"
         region: "{{region}}"
         state: present
         instance_ids:
           - "{{ web01_out.tagged_instances[0].id }}"
         purge_instance_ids: true
-        security_group_ids: "{{ vproELBSG_out.group_id }}"
+        security_group_ids: "{{ PRODELBSG_out.group_id }}"
         subnets:
           - "{{ pubsub1id }}"
           - "{{ pubsub2id }}"
@@ -205,8 +205,8 @@
 
     - name: Copy login key to provision_stack directory
       copy:
-        src: loginkey_vpro.pem
-        dest: provision-stack/loginkey_vpro.pem
+        src: loginkey_PROD.pem
+        dest: provision-stack/loginkey_PROD.pem
         mode: '0400'
 
     - name: Insert/Update Inventory file provision-stack/inventory-vpro
@@ -247,7 +247,7 @@
 
           [stack_inst:vars]
           ansible_user=ubuntu
-          ansible_ssh_private_key_file=loginkey_vpro.pem
+          ansible_ssh_private_key_file=loginkey_PROD.pem
           #ansible_python_interpreter=/usr/bin/python3
 
 
