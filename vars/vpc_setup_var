@@ -17,6 +17,10 @@ region: "us-east-1"
 # Zone Names
 zone1: us-east-1a
 zone2: us-east-1b
-zone3: us-east-1c
+zone3: us-east-1cupd
 
 state: present
+
+bastion_ami: ami-0533f2ba8a1995cf9
+region: us-east-1
+MYIP: 5.30.224.155/32
